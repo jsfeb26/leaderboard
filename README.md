@@ -1,0 +1,2 @@
+# leaderboard
+Example Meteor Application
