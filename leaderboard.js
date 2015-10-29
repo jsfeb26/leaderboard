@@ -22,10 +22,7 @@ if (Meteor.isClient) {
 
   Template.leaderboard.events({
     'click .player': function() {
-      var playerId = this._id;
-      Session.set('selectedPlayer', playerId);
-      var selectedPlayer = Session.get('selectedPlayer');
-      console.log(selectedPlayer);
+      Session.set('selectedPlayer', this._id);
     }
   });
 }
