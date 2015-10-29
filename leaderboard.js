@@ -4,7 +4,12 @@ PlayerList = new Mongo.Collection('players');
 if (Meteor.isClient) {
   Template.leaderboard.helpers({
     'player': function() {
-      return PlayerList.find();
+      // -1 sorts by descending and 1 sorts by ascending
+      return PlayerList.find({}, { sort: { score: -1, name: 1 } });
+    },
+    'showSelectedPlayer': function() {
+      var selectedPlayer = Session.get('selectedPlayer');
+      return PlayerList.findOne(selectedPlayer);
     },
     'selectedClass': function() {
       // because helper function is being run inside the each block
@@ -23,6 +28,14 @@ if (Meteor.isClient) {
   Template.leaderboard.events({
     'click .player': function() {
       Session.set('selectedPlayer', this._id);
+    },
+    'click .increment': function() {
+      var selectedPlayer = Session.get('selectedPlayer');
+      PlayerList.update(selectedPlayer, { $inc: { score: 5 } });
+    },
+    'click .decrement': function() {
+      var selectedPlayer = Session.get('selectedPlayer');
+      PlayerList.update(selectedPlayer, { $inc: { score: -5 } });
     }
   });
 }
