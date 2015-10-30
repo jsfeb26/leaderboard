@@ -2,14 +2,14 @@
 PlayerList = new Mongo.Collection('players');
 
 if (Meteor.isClient) {
+  Meteor.subscribe('thePlayers');
+
   Template.leaderboard.helpers({
     'player': function() {
       Session.set('selectedPlayer', undefined);
 
       // -1 sorts by descending and 1 sorts by ascending
-      var currentUserId = Meteor.userId();
-      return PlayerList.find({ createdBy: currentUserId },
-                             { sort: { score: -1, name: 1 } });
+      return PlayerList.find({}, { sort: { score: -1, name: 1 } });
     },
     'showSelectedPlayer': function() {
       var selectedPlayer = Session.get('selectedPlayer');
@@ -68,5 +68,8 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-
+  Meteor.publish('thePlayers', function() {
+    var currentUserId = this.userId;
+    return PlayerList.find({ createdBy: currentUserId });
+  });
 }
