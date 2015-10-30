@@ -4,8 +4,12 @@ PlayerList = new Mongo.Collection('players');
 if (Meteor.isClient) {
   Template.leaderboard.helpers({
     'player': function() {
+      Session.set('selectedPlayer', undefined);
+
       // -1 sorts by descending and 1 sorts by ascending
-      return PlayerList.find({}, { sort: { score: -1, name: 1 } });
+      var currentUserId = Meteor.userId();
+      return PlayerList.find({ createdBy: currentUserId },
+                             { sort: { score: -1, name: 1 } });
     },
     'showSelectedPlayer': function() {
       var selectedPlayer = Session.get('selectedPlayer');
@@ -50,10 +54,12 @@ if (Meteor.isClient) {
     'submit form': function(event) {
       event.preventDefault();
       var playerNameVar = event.target.playerName.value;
+      var currentUserId = Meteor.userId();
 
       PlayerList.insert({
         name: playerNameVar,
-        score: 0
+        score: 0,
+        createdBy: currentUserId
       });
 
       event.target.playerName.value = "";
